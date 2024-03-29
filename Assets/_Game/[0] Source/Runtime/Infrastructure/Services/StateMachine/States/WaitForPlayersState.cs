@@ -60,7 +60,7 @@ namespace Runtime.Infrastructure.Services.StateMachine.States
       private void SpawnProps()
       {
          var factory = new ObstacleFactory();
-         factory.RandomGeneration(_propPrefab, _finishPrefab, new Vector2(0, 0), new Vector2(0, -20f));
+         factory.RandomGeneration(_propPrefab, _finishPrefab, new Vector2(5, .5f), new Vector2(5, -19.5f));
       }
    }
 }

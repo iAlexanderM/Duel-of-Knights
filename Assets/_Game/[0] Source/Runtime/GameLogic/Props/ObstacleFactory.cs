@@ -30,13 +30,15 @@ namespace Runtime.GameLogic.Props
             NetworkServer.Spawn(firstInstance);
             NetworkServer.Spawn(secondInstance);
          }
-         
-         firstLastPosition += Vector2.right * _maxDistance;
-         secondLastPosition += Vector2.right * _maxDistance;
+
+         firstLastPosition += Vector2.right * (_maxDistance * 2) + Vector2.up * (1.3f);
+         secondLastPosition += Vector2.right * (_maxDistance * 2) + Vector2.up * (1.3f);
 
          var firstFinishInstance = Object.Instantiate(finishPrefab, firstLastPosition, Quaternion.identity);
          var secondFinishInstance = Object.Instantiate(finishPrefab, secondLastPosition, Quaternion.identity);
-
+         firstFinishInstance.GetComponent<Finish>().Init(0);
+         secondFinishInstance.GetComponent<Finish>().Init(1);
+         
          NetworkServer.Spawn(firstFinishInstance);
          NetworkServer.Spawn(secondFinishInstance);
       }
