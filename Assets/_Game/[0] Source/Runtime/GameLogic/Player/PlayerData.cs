@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Mirror;
 using Runtime.Infrastructure.Networking;
 using Runtime.UI;
@@ -16,10 +17,14 @@ namespace Runtime.GameLogic.Player
          get => _score;
          set
          {
-            _score = value; 
+            _score = value;
             StartCoroutine(OnDataChanged());
-            
          }
+      }
+
+      private void Start()
+      {
+         AudioService = AudioService.Instance;
       }
 
       [HideInInspector] public bool PlayerReady;
@@ -27,8 +32,10 @@ namespace Runtime.GameLogic.Player
       public UIService UIService;
 
       public PlayerMovement PlayerMovement;
+      public AudioService AudioService;
 
       public int PlayerId { get; set; }
+      public Animator Animator;
 
 
       [Command]

@@ -1,8 +1,5 @@
 using Mirror;
-using Runtime.GameLogic;
 using Runtime.GameLogic.Player;
-using Runtime.GameLogic.Props;
-using Runtime.Infrastructure;
 using UnityEngine;
 
 /*
@@ -14,6 +11,11 @@ public class MyNetworkManager : NetworkManager
 {
    [SerializeField] private GameObject _serverDataPrefab;
    [SerializeField] private GameObject _battleServicePrefab;
+   [SerializeField] private RuntimeAnimatorController[] _animators;
+
+   [SerializeField] private GameObject[] _players;
+   private int playerIndex = 0;
+   
 
    public SteamLobby SteamLobby;
 
@@ -168,13 +170,14 @@ public class MyNetworkManager : NetworkManager
       Transform startPos = GetStartPosition();
       Debug.Log(startPos);
       GameObject player = startPos != null
-         ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
-         : Instantiate(playerPrefab);
-
+         ? Instantiate(_players[playerIndex], startPos.position, startPos.rotation)
+         : Instantiate(_players[playerIndex]);
+      playerIndex++;
       // instantiating a "Player" prefab gives it the name "Player(clone)"
       // => appending the connectionId is WAY more useful for debugging!
       player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
-      player.GetComponent<PlayerData>().PlayerId = conn.connectionId;
+      var playerData = player.GetComponent<PlayerData>();
+      playerData.PlayerId = conn.connectionId;
       NetworkServer.AddPlayerForConnection(conn, player);
    }
 

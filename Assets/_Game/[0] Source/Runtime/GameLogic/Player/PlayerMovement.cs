@@ -1,6 +1,7 @@
 using System;
+using System.Collections;
 using Mirror;
-using Runtime.Infrastructure;
+using Runtime.GameLogic.Player;
 using UnityEngine;
 
 namespace Runtime.GameLogic
@@ -8,6 +9,7 @@ namespace Runtime.GameLogic
    public class PlayerMovement : NetworkBehaviour
    {
       [SerializeField] private Rigidbody2D _rigidbody2D;
+      [SerializeField] public PlayerAnimationController AnimationController;
 
       [Header("Jump Parameters")] [SerializeField]
       private float _jumpForce = 18;
@@ -16,17 +18,22 @@ namespace Runtime.GameLogic
       [SerializeField] private float _fallingGravityScale = 18;
 
       [Header("Movement Parameters")] [SerializeField]
-      private float _movementSpeed = 10;
-      
+      private float _movementSpeed = 16;
+
       private bool _isGrounded;
       private bool _canControl;
+      private bool _canMove;
 
       private void Update()
       {
-         if (!isLocalPlayer || !_canControl)
+         if (!isLocalPlayer || !_canMove)
             return;
 
          Move();
+
+         if (!_canControl)
+            return;
+
          Jump();
       }
 
@@ -73,10 +80,29 @@ namespace Runtime.GameLogic
       }
 
       [ClientRpc]
-      public void StartMove() =>
+      public void StartMove()
+      {
+         _canMove = true;
          _canControl = true;
-      
-      public void StopMove() =>
+         AnimationController.PlayRun();
+      }
+
+      public void StopMove()
+      {
+         StartCoroutine(StopMoveRoutine());
          _canControl = false;
+      }
+
+      public IEnumerator StopMoveRoutine()
+      {
+         var delay = new WaitForSeconds(0.2f);
+         while (_movementSpeed > 0.1f)
+         {
+            _movementSpeed = Mathf.Lerp(_movementSpeed, 0, 0.1f);
+            yield return delay;
+         }
+
+         _canMove = false;
+      }
    }
 }
